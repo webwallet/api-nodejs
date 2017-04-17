@@ -1,0 +1,32 @@
+{
+  "name": "@webwallet/api",
+  "version": "1.0.0",
+  "description": "WebWallet API reference implementation in Node.js",
+  "main": "index.js",
+  "dependencies": {
+    "joi": "^10.4.1",
+    "microapi": "^0.1.5",
+    "require-directory": "^2.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js",
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/webwallet/api.git"
+  },
+  "keywords": [
+    "iou",
+    "wallet",
+    "transaction",
+    "cryptocurrencies"
+  ],
+  "author": "webwallet.org",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/webwallet/api/issues"
+  },
+  "homepage": "https://github.com/webwallet/api#readme"
+}
