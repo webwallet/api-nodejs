@@ -1,6 +1,6 @@
 'use strict'
 
-const [,, port = 3000] = process.argv
+const port = process.env.PORT || 3000
 
 const Microapi = require('../../microapi/koa')
 const api = new Microapi()
