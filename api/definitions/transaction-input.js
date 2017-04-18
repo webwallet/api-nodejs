@@ -3,9 +3,9 @@
 const joi = require('joi')
 
 const schema = joi.object().keys({
-  hash: joi.object({}).meta({className: 'hash-object'}),
-  data: joi.object({}).meta({className: 'iou-data'}).required(),
-  sigs: joi.object({}).meta({className: 'signature-object'})
+  hash: joi.object({}).meta({className: 'crypto-hash-object'}),
+  data: joi.object({}).meta({className: 'transaction-iou-data'}).required(),
+  sigs: joi.object({}).meta({className: 'crypto-signature-object'})
 })
 
 module.exports = schema

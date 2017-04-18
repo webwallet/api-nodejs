@@ -3,9 +3,9 @@ const joi = require('joi')
 const schemas = {
   request: {
     body: {
-      hash: joi.object({}).meta({className: 'hash-object'}).required(),
-      data: joi.object({}).meta({className: 'transaction-data-post'}).required(),
-      sigs: joi.object({}).meta({className: 'signatures-array'})
+      hash: joi.object({}).meta({className: 'crypto-hash-object'}).required(),
+      data: joi.object({}).meta({className: 'transaction-request-data'}).required(),
+      sigs: joi.object({}).meta({className: 'crypto-signatures-array'})
     }
   },
   responses: {

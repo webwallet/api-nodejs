@@ -11,9 +11,9 @@ const bigNumber = {
 const schema = joi.object().keys({
   iss: joi.string().uri().max(lengths.issuer.max).required()
     .description('(issuer) webwallet domain'),
-  sub: joi.string().meta({className: 'wallet-address'}).required()
+  sub: joi.string().meta({className: 'webwallet-address'}).required()
     .description('(subject) source of the transaction'),
-  aud: joi.string().meta({className: 'wallet-address'}).required()
+  aud: joi.string().meta({className: 'webwallet-address'}).required()
     .description('(audience) destination of the transaction'),
 
   amt: joi.string().regex(bigNumber.positive).max(bigNumber.max.all).required()
@@ -28,8 +28,7 @@ const schema = joi.object().keys({
   nbf: joi.date().iso().options({convert: true})
     .description('(not before) earliest valid date for clearing'),
   exp: joi.date().iso().required().options({convert: true})
-    .description('(expires) latest valid date for clearing'),
-
+    .description('(expires) latest valid date for clearing')
 })
 
 

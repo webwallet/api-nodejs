@@ -21,7 +21,7 @@
                   "in": "path",
                   "required": true,
                   "schema": {
-                     "$ref": "#/definitions/wallet-address"
+                     "$ref": "#/definitions/webwallet-address"
                   }
                },
                {
@@ -78,7 +78,7 @@
                   "in": "body",
                   "required": true,
                   "schema": {
-                     "$ref": "#/definitions/hash-object"
+                     "$ref": "#/definitions/crypto-hash-object"
                   }
                },
                {
@@ -86,14 +86,14 @@
                   "in": "body",
                   "required": true,
                   "schema": {
-                     "$ref": "#/definitions/transaction-data-post"
+                     "$ref": "#/definitions/transaction-request-data"
                   }
                },
                {
                   "name": "sigs",
                   "in": "body",
                   "schema": {
-                     "$ref": "#/definitions/signatures-array"
+                     "$ref": "#/definitions/crypto-signatures-array"
                   }
                }
             ],
@@ -111,14 +111,7 @@
       }
    },
    "definitions": {
-      "currency-unit": {
-         "type": "string",
-         "pattern": "/^[1-9A-HJ-NP-Za-km-z]+$/",
-         "minLength": 26,
-         "maxLength": 35,
-         "description": "alphanumeric identifier for a currency unit"
-      },
-      "hash-object": {
+      "crypto-hash-object": {
          "type": "object",
          "required": [
             "alg",
@@ -150,7 +143,78 @@
             }
          }
       },
-      "iou-data": {
+      "crypto-public-key": {
+         "type": "string",
+         "minLength": 66,
+         "maxLength": 130,
+         "description": "cryptographic public key in hex format"
+      },
+      "crypto-signature-object": {
+         "type": "object",
+         "required": [
+            "alg",
+            "wid",
+            "sig"
+         ],
+         "properties": {
+            "alg": {
+               "type": "string",
+               "enum": [
+                  "ed25519"
+               ],
+               "description": "digital signature algorithm"
+            },
+            "wid": {
+               "$ref": "#/definitions/webwallet-address"
+            },
+            "key": {
+               "$ref": "#/definitions/crypto-public-key"
+            },
+            "kid": {
+               "type": "integer",
+               "minimum": 0,
+               "maximum": 0,
+               "description": "index of an array of public keys"
+            },
+            "sig": {
+               "type": "string",
+               "minLength": 140,
+               "maxLength": 140,
+               "description": "digital signature"
+            }
+         }
+      },
+      "crypto-signatures-array": {
+         "type": "array",
+         "items": {
+            "$ref": "#/definitions/crypto-signature-object"
+         }
+      },
+      "currency-unit": {
+         "type": "string",
+         "pattern": "/^[1-9A-HJ-NP-Za-km-z]+$/",
+         "minLength": 26,
+         "maxLength": 35,
+         "description": "alphanumeric identifier for a currency unit"
+      },
+      "transaction-input": {
+         "type": "object",
+         "required": [
+            "data"
+         ],
+         "properties": {
+            "hash": {
+               "$ref": "#/definitions/crypto-hash-object"
+            },
+            "data": {
+               "$ref": "#/definitions/transaction-iou-data"
+            },
+            "sigs": {
+               "$ref": "#/definitions/crypto-signature-object"
+            }
+         }
+      },
+      "transaction-iou-data": {
          "type": "object",
          "required": [
             "iss",
@@ -168,10 +232,10 @@
                "description": "(issuer) webwallet domain"
             },
             "sub": {
-               "$ref": "#/definitions/wallet-address"
+               "$ref": "#/definitions/webwallet-address"
             },
             "aud": {
-               "$ref": "#/definitions/wallet-address"
+               "$ref": "#/definitions/webwallet-address"
             },
             "amt": {
                "type": "string",
@@ -204,17 +268,7 @@
             }
          }
       },
-      "signature-object": {
-         "type": "object",
-         "properties": {}
-      },
-      "signatures-array": {
-         "type": "array",
-         "items": {
-            "$ref": "#/definitions/signature-object"
-         }
-      },
-      "transaction-data-post": {
+      "transaction-request-data": {
          "type": "object",
          "required": [
             "inputs"
@@ -231,24 +285,7 @@
             }
          }
       },
-      "transaction-input": {
-         "type": "object",
-         "required": [
-            "data"
-         ],
-         "properties": {
-            "hash": {
-               "$ref": "#/definitions/hash-object"
-            },
-            "data": {
-               "$ref": "#/definitions/iou-data"
-            },
-            "sigs": {
-               "$ref": "#/definitions/signature-object"
-            }
-         }
-      },
-      "wallet-address": {
+      "webwallet-address": {
          "type": "string",
          "pattern": "/^[1-9A-HJ-NP-Za-km-z]+$/",
          "minLength": 26,

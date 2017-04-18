@@ -3,7 +3,7 @@
 const joi = require('joi')
 const config = require('../config.json')
 const {hashes, inputs} = config.values.crypto
-const {min, max} = config.lengths.crypto.hashes
+const {min, max} = config.lengths.crypto.hash
 
 const schema = joi.object().keys({
   alg: joi.string().valid(hashes).default(hashes[0]).required()

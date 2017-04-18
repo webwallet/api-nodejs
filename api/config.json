@@ -1,6 +1,9 @@
 {
   "counters": {},
   "items": {
+    "publicKeys": {
+      "max": 1
+    },
     "transaction": {
       "inputs": {
         "min": 1,
@@ -20,16 +23,24 @@
         "max": 101
       }
     },
+    "crypto": {
+      "hash": {
+        "min": 64,
+        "max": 64
+      },
+      "publicKey": {
+        "min": 66,
+        "max": 130
+      },
+      "signature": {
+        "min": 140,
+        "max": 140
+      }
+    },
     "currency": {
       "id": {
         "min": 26,
         "max": 35
-      }
-    },
-    "crypto": {
-      "hashes": {
-        "min": 64,
-        "max": 64
       }
     },
     "iou": {
