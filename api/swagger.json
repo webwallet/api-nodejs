@@ -93,7 +93,7 @@
                   "name": "sigs",
                   "in": "body",
                   "schema": {
-                     "$ref": "#/definitions/crypto-signatures-array"
+                     "$ref": "#/definitions/crypto-signatures"
                   }
                }
             ],
@@ -111,6 +111,12 @@
       }
    },
    "definitions": {
+      "big-number-positive": {
+         "type": "string",
+         "pattern": "/^[+]?[0-9]+(.[0-9]+)?$/",
+         "maxLength": 101,
+         "description": "big-number string for arbitrary-precision arithmetic"
+      },
       "crypto-hash-object": {
          "type": "object",
          "required": [
@@ -184,11 +190,46 @@
             }
          }
       },
-      "crypto-signatures-array": {
+      "crypto-signatures": {
          "type": "array",
+         "minItems": 1,
+         "maxItems": 1,
          "items": {
-            "$ref": "#/definitions/crypto-signature-object"
-         }
+            "type": "object",
+            "required": [
+               "alg",
+               "wid",
+               "sig"
+            ],
+            "properties": {
+               "alg": {
+                  "type": "string",
+                  "enum": [
+                     "ed25519"
+                  ],
+                  "description": "digital signature algorithm"
+               },
+               "wid": {
+                  "$ref": "#/definitions/webwallet-address"
+               },
+               "key": {
+                  "$ref": "#/definitions/crypto-public-key"
+               },
+               "kid": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 0,
+                  "description": "index of an array of public keys"
+               },
+               "sig": {
+                  "type": "string",
+                  "minLength": 140,
+                  "maxLength": 140,
+                  "description": "DER encoded digital signature"
+               }
+            }
+         },
+         "description": "an array of digital signature objects"
       },
       "currency-unit": {
          "type": "string",
@@ -197,22 +238,30 @@
          "maxLength": 35,
          "description": "alphanumeric identifier for a currency unit"
       },
-      "transaction-input": {
-         "type": "object",
-         "required": [
-            "data"
-         ],
-         "properties": {
-            "hash": {
-               "$ref": "#/definitions/crypto-hash-object"
-            },
-            "data": {
-               "$ref": "#/definitions/transaction-iou-data"
-            },
-            "sigs": {
-               "$ref": "#/definitions/crypto-signature-object"
+      "transaction-inputs": {
+         "type": "array",
+         "minItems": 1,
+         "maxItems": 1,
+         "items": {
+            "type": "object",
+            "required": [
+               "hash",
+               "data",
+               "sigs"
+            ],
+            "properties": {
+               "hash": {
+                  "$ref": "#/definitions/crypto-hash-object"
+               },
+               "data": {
+                  "$ref": "#/definitions/transaction-iou-data"
+               },
+               "sigs": {
+                  "$ref": "#/definitions/crypto-signature-object"
+               }
             }
-         }
+         },
+         "description": "transaction inputs (IOUs)"
       },
       "transaction-iou-data": {
          "type": "object",
@@ -238,10 +287,7 @@
                "$ref": "#/definitions/webwallet-address"
             },
             "amt": {
-               "type": "string",
-               "pattern": "/^[+]?[0-9]+(.[0-9]+)?$/",
-               "maxLength": 101,
-               "description": "(amount) number of units to offset on clearing"
+               "$ref": "#/definitions/big-number-positive"
             },
             "cur": {
                "$ref": "#/definitions/currency-unit"
@@ -268,6 +314,10 @@
             }
          }
       },
+      "transaction-record-data": {
+         "type": "object",
+         "properties": {}
+      },
       "transaction-request-data": {
          "type": "object",
          "required": [
@@ -275,13 +325,7 @@
          ],
          "properties": {
             "inputs": {
-               "type": "array",
-               "minItems": 1,
-               "maxItems": 1,
-               "items": {
-                  "$ref": "#/definitions/transaction-input"
-               },
-               "description": "transaction inputs (IOUs)"
+               "$ref": "#/definitions/transaction-inputs"
             }
          }
       },

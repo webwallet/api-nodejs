@@ -6,6 +6,6 @@ const base58 = new RegExp(config.regex.base58)
 const {min, max} = config.lengths.address.id
 
 const schema = joi.string().alphanum().regex(base58).min(min).max(max)
-  .description('alphanumeric identifier for a wallet address')
+  .description('base58check encoded identifier for a wallet address')
 
 module.exports = schema
