@@ -2,12 +2,14 @@
 
 const joi = require('joi')
 const config = require('../config.json')
-const signatures = config.values.crypto.signatures
+
+const signatures = config.items.signatures.array
+const algorithms = config.values.crypto.signatures
 const maxPublicKeys = config.items.publicKeys.max - 1
 const {min: sigMin, max: sigMax} = config.lengths.crypto.signature
 
-const schema = joi.object().keys({
-  alg: joi.string().valid(signatures).required()
+const items = joi.object().keys({
+  alg: joi.string().valid(algorithms).required()
     .description('digital signature algorithm'),
   wid: joi.string().meta({className: 'webwallet-address'}).required()
     .description('webwallet address of the signer'),
@@ -16,7 +18,12 @@ const schema = joi.object().keys({
   kid: joi.number().integer().min(0).max(maxPublicKeys)
     .description('index of an array of public keys'),
   sig: joi.string().hex().min(sigMin).max(sigMax).required()
-    .description('digital signature')
+    .description('DER encoded digital signature')
 })
+
+const schema = joi.array().items(items)
+  .min(signatures.min).max(signatures.max)
+  .description('an array of digital signature objects')
+  .options({stripUnknown: false})
 
 module.exports = schema

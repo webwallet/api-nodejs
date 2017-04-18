@@ -9,6 +9,12 @@
         "min": 1,
         "max": 1
       }
+    },
+    "signatures": {
+      "array": {
+        "min": 1,
+        "max": 2
+      }
     }
   },
   "lengths": {
