@@ -2,10 +2,12 @@
 
 const joi = require('joi')
 const config = require('../config.json')
+const bigNumber = require('./big-number')
 const lengths = config.lengths.iou
-const bigNumber = {
-  positive: new RegExp(config.regex.bigNumber.decimal.fractional.positive),
-  max: {all: config.lengths.bigNumber.all.max}
+
+const amount = {
+  regex: bigNumber.decimal.fractional.positive,
+  length: bigNumber.lengths.max
 }
 
 const schema = joi.object().keys({
@@ -16,7 +18,7 @@ const schema = joi.object().keys({
   aud: joi.string().meta({className: 'webwallet-address'}).required()
     .description('(audience) destination of the transaction'),
 
-  amt: joi.string().regex(bigNumber.positive).max(bigNumber.max.all).required()
+  amt: joi.string().regex(amount.regex).max(amount.length).required()
     .description('(amount) number of units to offset on clearing'),
   cur: joi.string().meta({className: 'currency-unit'}).required()
     .description('(currency) unit of account identifier'),
