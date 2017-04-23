@@ -21,39 +21,14 @@
                   "in": "path",
                   "required": true,
                   "schema": {
-                     "$ref": "#/definitions/webwallet-address"
+                     "$ref": "#/definitions/crypto-address"
                   }
                },
                {
-                  "name": "currency",
+                  "name": "unit",
                   "in": "query",
                   "schema": {
-                     "$ref": "#/definitions/currency-unit"
-                  }
-               }
-            ],
-            "responses": {
-               "default": {
-                  "description": "",
-                  "schema": {
-                     "type": "object",
-                     "properties": {}
-                  },
-                  "examples": {}
-               }
-            }
-         }
-      },
-      "/currency/{currency}/supply": {
-         "get": {
-            "description": "",
-            "parameters": [
-               {
-                  "name": "currency",
-                  "in": "path",
-                  "required": true,
-                  "schema": {
-                     "$ref": "#/definitions/currency-unit"
+                     "$ref": "#/definitions/crypto-unit-of-account"
                   }
                }
             ],
@@ -111,11 +86,12 @@
       }
    },
    "definitions": {
-      "big-number-positive": {
+      "crypto-address": {
          "type": "string",
-         "pattern": "/^[+]?[0-9]+(.[0-9]+)?$/",
-         "maxLength": 101,
-         "description": "big-number string for arbitrary-precision arithmetic"
+         "pattern": "/^[1-9A-HJ-NP-Za-km-z]+$/",
+         "minLength": 26,
+         "maxLength": 35,
+         "description": "identifier for a cryptographic encumbrance"
       },
       "crypto-hash-object": {
          "type": "object",
@@ -155,45 +131,11 @@
          "maxLength": 130,
          "description": "cryptographic public key in hex format"
       },
-      "crypto-signature-object": {
-         "type": "object",
-         "required": [
-            "alg",
-            "wid",
-            "sig"
-         ],
-         "properties": {
-            "alg": {
-               "type": "string",
-               "enum": [
-                  "ed25519"
-               ],
-               "description": "digital signature algorithm"
-            },
-            "wid": {
-               "$ref": "#/definitions/webwallet-address"
-            },
-            "key": {
-               "$ref": "#/definitions/crypto-public-key"
-            },
-            "kid": {
-               "type": "integer",
-               "minimum": 0,
-               "maximum": 0,
-               "description": "index of an array of public keys"
-            },
-            "sig": {
-               "type": "string",
-               "minLength": 140,
-               "maxLength": 140,
-               "description": "digital signature"
-            }
-         }
-      },
       "crypto-signatures": {
          "type": "array",
          "minItems": 1,
-         "maxItems": 1,
+         "maxItems": 2,
+         "uniqueItems": true,
          "items": {
             "type": "object",
             "required": [
@@ -210,7 +152,7 @@
                   "description": "digital signature algorithm"
                },
                "wid": {
-                  "$ref": "#/definitions/webwallet-address"
+                  "$ref": "#/definitions/crypto-address"
                },
                "key": {
                   "$ref": "#/definitions/crypto-public-key"
@@ -231,17 +173,74 @@
          },
          "description": "an array of digital signature objects"
       },
-      "currency-unit": {
+      "crypto-unit-of-account": {
          "type": "string",
          "pattern": "/^[1-9A-HJ-NP-Za-km-z]+$/",
          "minLength": 26,
          "maxLength": 35,
-         "description": "alphanumeric identifier for a currency unit"
+         "description": "alphanumeric identifier for a cryptographic unit of account"
+      },
+      "math-big-number(+)": {
+         "type": "string",
+         "pattern": "/^[+]?[0-9]+(.[0-9]+)?$/",
+         "maxLength": 101,
+         "description": "big-number string for arbitrary-precision arithmetic"
+      },
+      "math-big-number": {
+         "type": "string",
+         "pattern": "/^[-+]?[0-9]+(.[0-9]+)?$/",
+         "maxLength": 101,
+         "description": "big-number string for arbitrary-precision arithmetic"
+      },
+      "transaction-amounts(+)": {
+         "type": "array",
+         "minItems": 1,
+         "maxItems": 1,
+         "uniqueItems": true,
+         "items": {
+            "type": "object",
+            "required": [
+               "cru",
+               "val"
+            ],
+            "properties": {
+               "cru": {
+                  "$ref": "#/definitions/crypto-unit-of-account"
+               },
+               "val": {
+                  "$ref": "#/definitions/big-number(+)"
+               }
+            }
+         },
+         "description": "positive big-number amounts per unit of account"
+      },
+      "transaction-amounts": {
+         "type": "array",
+         "minItems": 1,
+         "maxItems": 1,
+         "uniqueItems": true,
+         "items": {
+            "type": "object",
+            "required": [
+               "cru",
+               "val"
+            ],
+            "properties": {
+               "cru": {
+                  "$ref": "#/definitions/crypto-unit-of-account"
+               },
+               "val": {
+                  "$ref": "#/definitions/big-number"
+               }
+            }
+         },
+         "description": "big-number amounts per unit of account"
       },
       "transaction-inputs": {
          "type": "array",
          "minItems": 1,
          "maxItems": 1,
+         "uniqueItems": true,
          "items": {
             "type": "object",
             "required": [
@@ -270,7 +269,7 @@
             "sub",
             "aud",
             "amt",
-            "cur",
+            "cru",
             "nce",
             "exp"
          ],
@@ -278,19 +277,19 @@
             "iss": {
                "type": "string",
                "maxLength": 100,
-               "description": "(issuer) webwallet domain"
+               "description": "(issuer) transaction clearing domain"
             },
             "sub": {
-               "$ref": "#/definitions/webwallet-address"
+               "$ref": "#/definitions/crypto-address"
             },
             "aud": {
-               "$ref": "#/definitions/webwallet-address"
+               "$ref": "#/definitions/crypto-address"
             },
             "amt": {
-               "$ref": "#/definitions/big-number-positive"
+               "$ref": "#/definitions/math-big-number(+)"
             },
-            "cur": {
-               "$ref": "#/definitions/currency-unit"
+            "cru": {
+               "$ref": "#/definitions/crypto-unit-of-account"
             },
             "nce": {
                "type": "string",
@@ -314,9 +313,91 @@
             }
          }
       },
+      "transaction-outputs": {
+         "type": "array",
+         "minItems": 2,
+         "maxItems": 2,
+         "uniqueItems": true,
+         "items": {
+            "type": "object",
+            "required": [
+               "adr",
+               "bal",
+               "cru",
+               "lim",
+               "pre"
+            ],
+            "properties": {
+               "adr": {
+                  "$ref": "#/definitions/crypto-address"
+               },
+               "bal": {
+                  "$ref": "#/definitions/math-big-number"
+               },
+               "cru": {
+                  "$ref": "#/definitions/crypto-unit-of-account"
+               },
+               "lim": {
+                  "type": "object",
+                  "required": [
+                     "low"
+                  ],
+                  "properties": {
+                     "low": {
+                        "$ref": "#/definitions/math-big-number",
+                        "description": "lower limit constraint for the balance property"
+                     },
+                     "upp": {
+                        "$ref": "#/definitions/math-big-number",
+                        "description": "upper limit constraint for the balance property"
+                     }
+                  }
+               },
+               "pre": {
+                  "$ref": "#/definitions/transaction-pointers"
+               }
+            }
+         },
+         "description": "transaction outputs (address state)"
+      },
+      "transaction-pointers": {
+         "type": "array",
+         "minItems": 0,
+         "maxItems": 10,
+         "uniqueItems": true,
+         "items": {
+            "type": "string",
+            "pattern": "/^([0-9a-fA-F]{2})+::[0-9]{1}$/",
+            "minLength": 67,
+            "maxLength": 67,
+            "description": "transaction pointer in {hash}::{index} format"
+         },
+         "description": "hash pointers to previous transaction outputs"
+      },
       "transaction-record-data": {
          "type": "object",
-         "properties": {}
+         "required": [
+            "amounts",
+            "inputs",
+            "outputs"
+         ],
+         "properties": {
+            "amounts": {
+               "$ref": "#/definitions/transaction-amounts(+)"
+            },
+            "credit": {
+               "$ref": "#/definitions/transaction-amounts"
+            },
+            "easing": {
+               "$ref": "#/definitions/transaction-amounts"
+            },
+            "inputs": {
+               "$ref": "#/definitions/transaction-inputs"
+            },
+            "outputs": {
+               "$ref": "#/definitions/transaction-outputs"
+            }
+         }
       },
       "transaction-request-data": {
          "type": "object",
@@ -328,13 +409,6 @@
                "$ref": "#/definitions/transaction-inputs"
             }
          }
-      },
-      "webwallet-address": {
-         "type": "string",
-         "pattern": "/^[1-9A-HJ-NP-Za-km-z]+$/",
-         "minLength": 26,
-         "maxLength": 35,
-         "description": "alphanumeric identifier for a wallet address"
       }
    }
 }
