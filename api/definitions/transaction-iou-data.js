@@ -2,7 +2,6 @@
 
 const joi = require('joi')
 const config = require('../config.json')
-const bigNumber = require('./big-number-positive')
 
 const lengths = config.lengths.transaction.iou
 
@@ -14,7 +13,7 @@ const schema = joi.object().keys({
   aud: joi.string().meta({className: 'crypto-address'}).required()
     .description('(audience) destination of the transaction'),
 
-  amt: joi.string().meta({className: 'big-number-positive'}).required()
+  amt: joi.string().meta({className: 'math-big-number(+)'}).required()
     .description('(amount) number of units to offset on clearing'),
   cru: joi.string().meta({className: 'crypto-unit-of-account'}).required()
     .description('(unit) cryptographic unit of account identifier'),
