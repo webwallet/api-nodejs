@@ -2,7 +2,7 @@
 
 const joi = require('joi')
 const config = require('../config.json')
-const inputs = {items: config.items.transaction.inputs}
+const inputs = config.items.transaction.inputs
 
 const items = joi.object().keys({
   hash: joi.object({}).meta({className: 'crypto-hash-object'}).required(),
@@ -10,8 +10,7 @@ const items = joi.object().keys({
   sigs: joi.object({}).meta({className: 'crypto-signature-object'}).required()
 })
 
-const schema = joi.array().items(items)
-  .min(inputs.items.min).max(inputs.items.max)
+const schema = joi.array().items(items).min(inputs.min).max(inputs.max)
   .description('transaction inputs (IOUs)')
   .options({stripUnknown: false})
 

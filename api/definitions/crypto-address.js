@@ -3,7 +3,7 @@
 const joi = require('joi')
 const config = require('../config.json')
 const base58 = new RegExp(config.regex.base58)
-const {min, max} = config.lengths.address.id
+const {min, max} = config.lengths.crypto.address
 
 const schema = joi.string().alphanum().regex(base58).min(min).max(max)
   .description('identifier for a cryptographic encumbrance')

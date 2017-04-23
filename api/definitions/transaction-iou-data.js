@@ -4,7 +4,7 @@ const joi = require('joi')
 const config = require('../config.json')
 const bigNumber = require('./big-number-positive')
 
-const lengths = config.lengths.iou
+const lengths = config.lengths.transaction.iou
 
 const schema = joi.object().keys({
   iss: joi.string().uri().max(lengths.issuer.max).required()
