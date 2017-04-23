@@ -9,7 +9,7 @@ const items = joi.object().keys({
     .description('cryptographic address identifier'),
   bal: joi.string().meta({className: 'big-number-all'}).required()
     .description('number of units accounted by the output'),
-  cun: joi.string().meta({className: 'crypto-unit-of-account'}).required()
+  cru: joi.string().meta({className: 'crypto-unit-of-account'}).required()
     .description('unit of account in which the balance is denominated'),
   lim: {
     low: joi.alternatives().required().try(
