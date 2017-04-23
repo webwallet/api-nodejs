@@ -10,7 +10,8 @@ const items = joi.object().keys({
   sigs: joi.object({}).meta({className: 'crypto-signature-object'}).required()
 })
 
-const schema = joi.array().items(items).min(inputs.min).max(inputs.max)
+const schema = joi.array().items(items)
+  .min(inputs.min).max(inputs.max).unique()
   .description('transaction inputs (IOUs)')
   .options({stripUnknown: false})
 

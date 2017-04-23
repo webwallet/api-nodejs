@@ -22,7 +22,7 @@ const items = joi.object().keys({
 })
 
 const schema = joi.array().items(items)
-  .min(signatures.min).max(signatures.max)
+  .min(signatures.min).max(signatures.max).unique()
   .description('an array of digital signature objects')
   .options({stripUnknown: false})
 
