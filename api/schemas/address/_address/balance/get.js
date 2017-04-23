@@ -5,10 +5,10 @@ const joi = require('joi')
 const schemas = {
   request: {
     path: {
-      address: joi.string().required().meta({className: 'webwallet-address'})
+      address: joi.string().required().meta({className: 'crypto-address'})
     },
     query: {
-      currency: joi.string().meta({className: 'currency-unit'})
+      unit: joi.string().meta({className: 'crypto-unit-of-account'})
     }
   },
   responses: {

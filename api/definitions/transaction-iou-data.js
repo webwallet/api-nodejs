@@ -8,16 +8,16 @@ const lengths = config.lengths.iou
 
 const schema = joi.object().keys({
   iss: joi.string().uri().max(lengths.issuer.max).required()
-    .description('(issuer) webwallet domain'),
-  sub: joi.string().meta({className: 'webwallet-address'}).required()
+    .description('(issuer) transaction clearing domain'),
+  sub: joi.string().meta({className: 'crypto-address'}).required()
     .description('(subject) source of the transaction'),
-  aud: joi.string().meta({className: 'webwallet-address'}).required()
+  aud: joi.string().meta({className: 'crypto-address'}).required()
     .description('(audience) destination of the transaction'),
 
   amt: joi.string().meta({className: 'big-number-positive'}).required()
     .description('(amount) number of units to offset on clearing'),
-  cur: joi.string().meta({className: 'currency-unit'}).required()
-    .description('(currency) unit of account identifier'),
+  cun: joi.string().meta({className: 'crypto-unit-of-account'}).required()
+    .description('(unit) cryptographic unit of account identifier'),
   nce: joi.string().max(lengths.nonce.max).required()
     .description('(nonce) random value to prevent replay attacks'),
 

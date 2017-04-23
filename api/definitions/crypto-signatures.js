@@ -11,8 +11,8 @@ const {min: sigMin, max: sigMax} = config.lengths.crypto.signature
 const items = joi.object().keys({
   alg: joi.string().valid(algorithms).required()
     .description('digital signature algorithm'),
-  wid: joi.string().meta({className: 'webwallet-address'}).required()
-    .description('webwallet address of the signer'),
+  wid: joi.string().meta({className: 'crypto-address'}).required()
+    .description('cryptographic address of the signer'),
   key: joi.string().meta({className: 'crypto-public-key'})
     .description('public key for signature verification'),
   kid: joi.number().integer().min(0).max(maxPublicKeys)
