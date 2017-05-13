@@ -1,6 +1,6 @@
 'use strict'
 
-const Microapi = require('../../microapi/koa')
+const Microapi = require('microapi/koa')
 const Graphstore = require('./lib/clients/graphstore')
 const Hashtable = require('./lib/clients/hashtable')
 
