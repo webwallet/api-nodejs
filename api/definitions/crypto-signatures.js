@@ -15,7 +15,7 @@ const items = joi.object().keys({
     .description('cryptographic address of the signer'),
   key: joi.string().meta({className: 'crypto-public-key'})
     .description('public key for signature verification'),
-  kid: joi.number().integer().min(0).max(maxPublicKeys)
+  kid: joi.number().integer().min(0).max(maxPublicKeys - 1)
     .description('index of an array of public keys'),
   sig: joi.string().hex().min(sigMin).max(sigMax).required()
     .description('DER encoded digital signature')
