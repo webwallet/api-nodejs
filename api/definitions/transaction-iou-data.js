@@ -6,7 +6,7 @@ const config = require('../config.json')
 const lengths = config.lengths.transaction.iou
 
 const schema = joi.object().keys({
-  iss: joi.string().uri().max(lengths.issuer.max).required()
+  iss: joi.string().max(lengths.issuer.max).required()
     .description('(issuer) transaction clearing domain'),
   sub: joi.string().meta({className: 'crypto-address'}).required()
     .description('(subject) source of the transaction'),
@@ -27,6 +27,5 @@ const schema = joi.object().keys({
   exp: joi.date().iso().required().options({convert: true})
     .description('(expires) latest valid date for clearing')
 })
-
 
 module.exports = schema
