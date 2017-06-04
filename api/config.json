@@ -49,7 +49,7 @@
         "max": 130
       },
       "signature": {
-        "min": 140,
+        "min": 130,
         "max": 140
       },
       "unitOfAccount": {
@@ -75,7 +75,8 @@
   "values": {
     "crypto": {
       "hashes": [
-        "sha256"
+        "sha256",
+        "sha256:sha256"
       ],
       "inputs": [
         "stringify:data",
