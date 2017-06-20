@@ -12,7 +12,7 @@ module.exports = async function handler({ request, params, database }) {
 
   /* 4. Get previous unspent outputs and initialize new transaction outputs */
   let previous = await utils.transaction.getUnspentOutputs({wallets, database})
-  let outputs = utils.transaction.buildOutputMapping(wallets)
+  let outputs = utils.transaction.buildOutputsMapping(wallets)
   /* 5. Combine inputs and previous outputs to compute new outputs */
   await utils.transaction.feedPreviousToOutputs(previous, outputs)
   await utils.transaction.feedInputsToOutputs(inputs, outputs)
@@ -24,13 +24,14 @@ module.exports = async function handler({ request, params, database }) {
   /* 7. Store transaction document in the hashtable database */
   let hashtableResult = await utils.transaction
     .storeTransactionRecord({transaction, database})
-  /* 8. Send graphstore clearing query and run post-query validations */
-  let queryParams = utils.transaction.buildQueryParameters(transaction)
-  queryParams.countspaces = countspaces
-  let graphQuery = await database.graphstore
+  /* 8. Send graphstore clearing query */
+  let queryParams = Object.assign({countspaces},
+    utils.transaction.buildQueryParameters(transaction))
+  let {transaction: graphTransaction, records} = await database.graphstore
     .query('spendTransactionOutputs', queryParams)
-  /* 9. commit / rollback */
-  graphQuery.transaction.commit()
+  /* 9. Run post-query validations and commit / rollback */
+  let validation = await utils.transaction.preCommitValidations(transaction, records)
+  await utils.transaction.commitORRollback(validation, graphTransaction)
 
-  return {body: 'post /transaction', status: 200}
+  return {body: validation.response, status: 200}
 }
