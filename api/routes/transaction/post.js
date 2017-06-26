@@ -8,7 +8,12 @@ module.exports = async function handler({ request, params, database }) {
   /* 1. Extract wallet properties from input sources and targets */
   let {wallets, countspaces} = utils.iou.parseWalletProperties(inputs)
   /* 2. Get public keys for signature verification, if applicable */
+  await utils.iou.findCryptoPublicKeys(inputs, wallets)
   /* 3. Verify digital signatures of all IOUs */
+  let verification = await utils.iou.verifyCryptoSignatures(inputs, wallets)
+  if (verification.result === false) {
+    return {/*reject or store in intermediate state*/}
+  }
 
   /* 4. Get previous unspent outputs and initialize new transaction outputs */
   let previous = await utils.transaction.getUnspentOutputs({wallets, database})
