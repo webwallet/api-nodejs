@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "bignumber.js": "^4.0.2",
+    "elliptic": "^6.4.0",
     "joi": "^10.4.1",
     "microapi": "^0.1.5",
     "require-directory": "^2.1.1"
