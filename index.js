@@ -14,8 +14,8 @@ function databaseMiddleware(databases) {
 async function init({port = 3000} = {}) {
   const [api, graphstore, hashtable] = await Promise.all([
     new Microapi(),
-    Graphstore.database.connect(),
-    Hashtable.database.connect()
+    Graphstore.database.connect({host: process.env.GRAPHHOST, auth: {password: process.env.GRAPHPASS}}),
+    Hashtable.database.connect({host: process.env.COUCHHOST, name: 'hashtable', auth: {password: process.env.COUCHPASS}})
   ])
 
   api.use(databaseMiddleware({graphstore, hashtable}))
