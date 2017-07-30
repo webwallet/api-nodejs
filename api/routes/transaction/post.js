@@ -2,7 +2,7 @@
 
 const utils = require('*lib/utils')
 
-module.exports = async function handler({ request, params, database }) {
+async function handler({ request, params, database }) {
   let inputs = request.body.data.inputs
 
   /* 1. Extract wallet properties from input sources and targets */
@@ -11,9 +11,6 @@ module.exports = async function handler({ request, params, database }) {
   await utils.iou.findCryptoPublicKeys(inputs, wallets)
   /* 3. Verify digital signatures of all IOUs */
   let verification = await utils.iou.verifyCryptoSignatures(inputs, wallets)
-  if (verification.result === false) {
-    return {/*reject or store in intermediate state*/}
-  }
 
   /* 4. Get previous unspent outputs and initialize new transaction outputs */
   let previous = await utils.transaction.getUnspentOutputs({wallets, database})
@@ -40,3 +37,18 @@ module.exports = async function handler({ request, params, database }) {
 
   return {body: validation.response, status: 200}
 }
+
+handler.exceptions = async function exceptions(context, exception) {
+  let body = {error: {name: exception.message, details: exception.details}}
+
+  switch (exception.message) {
+  case 'signature-verification-failed':
+    break
+  default:
+    break
+  }
+
+  return {body}
+}
+
+module.exports = handler
