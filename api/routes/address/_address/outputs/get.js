@@ -2,7 +2,7 @@
 
 const utils = require('*lib/utils')
 
-module.exports = async function handler({ request, params, database }) {
+async function handler({ request, params, database }) {
   let wallets = new Map()
   wallets.set(params.address, {countspaces: [request.query.unit]})
 
@@ -11,3 +11,5 @@ module.exports = async function handler({ request, params, database }) {
 
   return {body: {data: {outputs}}, status: 200}
 }
+
+module.exports = handler
