@@ -19,9 +19,8 @@ async function handler({ request, params, database }) {
   await utils.transaction.feedPreviousToOutputs(previous, outputs)
   await utils.transaction.feedInputsToOutputs(inputs, outputs)
   /* 6. Generate and validate transaction document */
-  let transaction = utils.transaction.generateDocument({inputs})
-  transaction.data.outputs = utils.convertMapToArray(outputs)
-  transaction.hash().sign([])
+  let transaction = utils.transaction.generateDocument({inputs, outputs})
+  transaction.validate().hash().sign([])
 
   /* 7. Store transaction document in the hashtable database */
   let hashtableResult = await utils.transaction
@@ -39,7 +38,8 @@ async function handler({ request, params, database }) {
 }
 
 handler.exceptions = async function exceptions(context, exception) {
-  let body = {error: {name: exception.message, details: exception.details}}
+  let {message, details, stack} = exception
+  let body = {error: {message, details}}
 
   switch (exception.message) {
   case 'signature-verification-failed':
