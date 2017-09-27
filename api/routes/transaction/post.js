@@ -40,15 +40,17 @@ async function handler({ request, params, database }) {
 handler.exceptions = async function exceptions(context, exception) {
   let {message, details, stack} = exception
   let body = {error: {message, details}}
+  let status = 400
 
   switch (exception.message) {
   case 'signature-verification-failed':
     break
   default:
+    status = 500
     break
   }
 
-  return {body}
+  return {body, status}
 }
 
 module.exports = handler
