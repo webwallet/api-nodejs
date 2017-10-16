@@ -4,11 +4,15 @@
   "description": "WebWallet API reference implementation in Node.js",
   "main": "index.js",
   "dependencies": {
+    "@webwallet/graphstore": "^0.1.1",
+    "@webwallet/hashtable": "^0.1.3",
     "bignumber.js": "^4.0.2",
+    "bs58check": "^2.0.2",
     "elliptic": "^6.4.0",
     "joi": "^10.4.1",
-    "microapi": "^0.1.5",
-    "require-directory": "^2.1.1"
+    "microapi": "^0.1.8",
+    "require-directory": "^2.1.1",
+    "ripemd160": "^2.0.1"
   },
   "devDependencies": {},
   "scripts": {
