@@ -5,7 +5,7 @@ const config = require('../config.json')
 
 const signatures = config.items.signatures.array
 const algorithms = config.values.crypto.signatures
-const maxPublicKeys = config.items.publicKeys.max - 1
+const maxPublicKeys = config.items.publicKeys.max
 const {min: sigMin, max: sigMax} = config.lengths.crypto.signature
 
 const items = joi.object().keys({
