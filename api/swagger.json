@@ -12,7 +12,7 @@
    "consumes": "application/json",
    "produces": "application/json",
    "paths": {
-      "/address/{address}/balance": {
+      "/address/{address}/outputs": {
          "get": {
             "description": "",
             "parameters": [
@@ -51,7 +51,6 @@
                {
                   "name": "hash",
                   "in": "body",
-                  "required": true,
                   "schema": {
                      "$ref": "#/definitions/crypto-hash-object"
                   }
@@ -103,9 +102,10 @@
             "alg": {
                "type": "string",
                "enum": [
-                  "sha256"
+                  "sha256",
+                  "sha256:sha256"
                ],
-               "description": "cryptographic hash algorithm",
+               "description": "colon separated cryptographic hash algorithms",
                "default": "sha256"
             },
             "typ": {
@@ -114,7 +114,7 @@
                   "stringify:data",
                   "merkle:data.inputs.hash.val"
                ],
-               "description": "instructions for hash generation",
+               "description": "colon separated instructions for hash generation",
                "default": "stringify:data"
             },
             "val": {
@@ -165,7 +165,7 @@
                },
                "sig": {
                   "type": "string",
-                  "minLength": 140,
+                  "minLength": 130,
                   "maxLength": 140,
                   "description": "DER encoded digital signature"
                }
@@ -183,6 +183,12 @@
       "math-big-number(+)": {
          "type": "string",
          "pattern": "/^[+]?[0-9]+(.[0-9]+)?$/",
+         "maxLength": 101,
+         "description": "big-number string for arbitrary-precision arithmetic"
+      },
+      "math-big-number(-)": {
+         "type": "string",
+         "pattern": "/^-[0-9]+(.[0-9]+)?$/",
          "maxLength": 101,
          "description": "big-number string for arbitrary-precision arithmetic"
       },
@@ -256,7 +262,7 @@
                   "$ref": "#/definitions/transaction-iou-data"
                },
                "sigs": {
-                  "$ref": "#/definitions/crypto-signature-object"
+                  "$ref": "#/definitions/crypto-signatures"
                }
             }
          },
@@ -287,6 +293,9 @@
             },
             "amt": {
                "$ref": "#/definitions/math-big-number(+)"
+            },
+            "alw": {
+               "$ref": "#/definitions/math-big-number(-)"
             },
             "cru": {
                "$ref": "#/definitions/crypto-unit-of-account"
