@@ -6,11 +6,14 @@ const config = require('../config.json')
 const signatures = config.items.signatures.array
 const algorithms = config.values.crypto.signatures
 const maxPublicKeys = config.items.publicKeys.max
+const addressDerivation = config.values.crypto.address.derivation
 const {min: sigMin, max: sigMax} = config.lengths.crypto.signature
 
 const items = joi.object().keys({
   alg: joi.string().valid(algorithms).required()
     .description('digital signature algorithm'),
+  wdf: joi.string().valid(addressDerivation).default(addressDerivation[0])
+    .description('wallet address derivation function'),
   wid: joi.string().meta({className: 'crypto-address'}).required()
     .description('cryptographic address of the signer'),
   key: joi.string().meta({className: 'crypto-public-key'})

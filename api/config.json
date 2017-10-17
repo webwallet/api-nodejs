@@ -74,6 +74,11 @@
   },
   "values": {
     "crypto": {
+      "address": {
+        "derivation": [
+          "sha256:ripemd160"
+        ]
+      },
       "hashes": [
         "sha256",
         "sha256:sha256"
