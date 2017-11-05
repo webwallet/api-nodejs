@@ -5,6 +5,9 @@ const utils = require('*lib/utils')
 async function handler({ request, params, database }) {
   let inputs = request.body.data.inputs
 
+  /* 0. Verify transaction integrity */
+  await utils.iou.verifyCryptoIntegrity(inputs)
+
   /* 1. Extract wallet properties from input sources and targets */
   let {wallets, countspaces} = utils.iou.parseWalletProperties(inputs)
   /* 2. Get public keys for signature verification, if applicable */
