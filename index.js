@@ -1,8 +1,8 @@
 'use strict'
 
 const Microapi = require('microapi/koa')
-const Graphstore = require('./lib/clients/graphstore')
 const Hashtable = require('./lib/clients/hashtable')
+const Graphstore = require('./lib/clients/graphstore')
 
 function databaseMiddleware(databases) {
   return async (context, next) => {
@@ -11,11 +11,17 @@ function databaseMiddleware(databases) {
   }
 }
 
+let options = {
+  hashtable: {host: process.env.COUCHHOST, name: process.env.COUCHNAME,
+    auth: {username: process.env.COUCHUSER, password: process.env.COUCHPASS}},
+  graphstore: {host: process.env.GRAPHHOST, auth: {password: process.env.GRAPHPASS}}
+}
+
 async function init({port = 3000} = {}) {
-  const [api, graphstore, hashtable] = await Promise.all([
+  const [api, hashtable, graphstore] = await Promise.all([
     new Microapi(),
-    Graphstore.database.connect({host: process.env.GRAPHHOST, auth: {password: process.env.GRAPHPASS}}),
-    Hashtable.database.connect({host: process.env.COUCHHOST, name: process.env.COUCHNAME, auth: {password: process.env.COUCHPASS}})
+    Hashtable.database.connect(options.hashtable),
+    Graphstore.database.connect(options.graphstore)
   ])
 
   api.use(databaseMiddleware({graphstore, hashtable}))
