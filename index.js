@@ -1,20 +1,22 @@
 'use strict'
 
+let dotenv = require('dotenv').config()
+
 const Microapi = require('microapi/koa')
 const Hashtable = require('./lib/clients/hashtable')
 const Graphstore = require('./lib/clients/graphstore')
+
+let options = {
+  hashtable: {host: process.env.COUCHHOST, name: process.env.COUCHNAME,
+    auth: {username: process.env.COUCHUSER, password: process.env.COUCHPASS}},
+  graphstore: {host: process.env.GRAPHHOST, auth: {password: process.env.GRAPHPASS}}
+}
 
 function databaseMiddleware(databases) {
   return async (context, next) => {
     context.database = databases
     await next()
   }
-}
-
-let options = {
-  hashtable: {host: process.env.COUCHHOST, name: process.env.COUCHNAME,
-    auth: {username: process.env.COUCHUSER, password: process.env.COUCHPASS}},
-  graphstore: {host: process.env.GRAPHHOST, auth: {password: process.env.GRAPHPASS}}
 }
 
 async function init({port = 3000} = {}) {
