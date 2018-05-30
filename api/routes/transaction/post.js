@@ -21,8 +21,8 @@ async function handler({ request, params, database }) {
   /* 5. Combine inputs and previous outputs to compute new outputs */
   await utils.transaction.feedPreviousToOutputs(previous, outputs)
   await utils.transaction.feedInputsToOutputs(inputs, outputs)
-  /* 6. Generate and validate transaction document */
-  let transaction = utils.transaction.generateDocument({inputs, outputs})
+  /* 6. Build and validate transaction document */
+  let transaction = utils.transaction.buildDocument({inputs, outputs})
   transaction.validate().hash().sign([])
 
   /* 7. Store transaction document in the hashtable database */
