@@ -4,6 +4,7 @@
   "description": "WebWallet API reference implementation in Node.js",
   "main": "index.js",
   "dependencies": {
+    "@webwallet/cryptools": "^1.0.0",
     "@webwallet/graphstore": "^0.1.1",
     "@webwallet/hashtable": "^0.1.3",
     "bignumber.js": "^4.0.2",
