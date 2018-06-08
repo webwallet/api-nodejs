@@ -16,7 +16,7 @@ const schema = joi.object().keys({
   amt: joi.string().meta({className: 'math-big-number(+)'}).required()
     .description('(amount) number of units to offset on clearing'),
   alw: joi.string().meta({className: 'math-big-number(-)'})
-      .description('(allowance) number of units to grant as credit'),
+    .description('(allowance) number of units to grant as credit'),
   cru: joi.string().meta({className: 'crypto-unit-of-account'}).required()
     .description('(unit) cryptographic unit of account identifier'),
   nce: joi.string().max(lengths.nonce.max).required()

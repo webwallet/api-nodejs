@@ -21,6 +21,10 @@
     "test": "npm test",
     "postinstall": "node scripts/symlink"
   },
+  "engines": {
+    "node": "8.x",
+    "npm": "5.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/webwallet/api.git"
