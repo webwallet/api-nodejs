@@ -1,11 +1,10 @@
-const joi = require('joi')
 
-const schemas = {
+const schemas = require('@webwallet/schemas').joi
+
+const definitions = {
   request: {
     body: {
-      hash: joi.object({}).meta({className: 'crypto-hash-object'}),
-      data: joi.object({}).meta({className: 'transaction-request-data'}).required(),
-      sigs: joi.object({}).meta({className: 'crypto-signatures'})
+      data: schemas.transaction.request.data
     }
   },
   responses: {
@@ -19,6 +18,6 @@ const schemas = {
 
 module.exports = {
   description: '',
-  definitions: schemas,
+  definitions,
   validations: {}
 }
