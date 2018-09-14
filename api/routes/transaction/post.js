@@ -34,7 +34,7 @@ async function handler({ request, params, database }) {
   let {transaction: graphTransaction, records} = await database.graphstore
     .query('spendTransactionOutputs', queryParams)
   /* 9. Run post-query validations and commit / rollback */
-  let validation = await utils.transaction.preCommitValidations(transaction, records)
+  let validation = await utils.transaction.preCommitValidation(transaction, records)
   await utils.transaction.commitORRollback(validation, graphTransaction)
 
   return {body: validation.response, status: 200}

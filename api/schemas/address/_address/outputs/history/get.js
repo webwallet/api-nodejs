@@ -8,7 +8,7 @@ const schemas = {
       address: joi.string().required().meta({className: 'crypto-address'})
     },
     query: {
-      unit: joi.string().meta({className: 'crypto-unit-of-account'})
+      counter: joi.string().meta({className: 'crypto-unit-of-account'})
     }
   },
   responses: {
