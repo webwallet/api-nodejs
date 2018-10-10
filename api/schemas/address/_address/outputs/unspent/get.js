@@ -5,11 +5,13 @@ const joi = require('joi')
 const schemas = {
   request: {
     path: {
-      address: joi.string().required().meta({className: 'crypto-address'})
+      address: joi.string().meta({className: 'crypto-address'}).required()
     },
     query: {
-      counter: joi.string().meta({className: 'crypto-unit-of-account'})
-    }
+      counter: joi.string().meta({className: 'crypto-counter'}).required(),
+      limit: joi.number().integer().min(0).default(10),
+      skip: joi.number().integer().min(0).default(0)
+    } // todo: configuration values
   },
   responses: {
     default: {
