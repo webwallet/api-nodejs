@@ -3,9 +3,8 @@ const schemas = require('@webwallet/schemas').joi
 
 const definitions = {
   request: {
-    body: {
-      data: schemas.transaction.request.data
-    }
+    body: schemas.transaction.request.object
+      .meta({className: 'transaction-request-object'})
   },
   responses: {
     default: {
