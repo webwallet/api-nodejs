@@ -1,6 +1,6 @@
 'use strict'
 
-const utils = require('*lib/utils')
+const utils = require('@lib/utils')
 
 async function handler({ request, params, database }) {
   let inputs = request.body.data.inputs

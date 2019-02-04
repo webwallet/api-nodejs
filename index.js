@@ -1,6 +1,7 @@
 'use strict'
 
-let dotenv = require('dotenv').config()
+require('module-alias/register')
+require('dotenv').config()
 
 const Microapi = require('microapi/koa')
 const Hashtable = require('./lib/clients/hashtable')
@@ -34,7 +35,9 @@ async function init({port = 3000} = {}) {
 
   api.use(databaseMiddleware({graphstore, hashtable}))
   api.define('./api')
-  api.listen(port)
+  api.listen(port, () => {
+    console.log(`Listening on port ${port}`)
+  })
 
   return {api, graphstore, hashtable}
 }
