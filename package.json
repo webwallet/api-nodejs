@@ -7,9 +7,9 @@
     "@lib": "lib"
   },
   "dependencies": {
-    "@webwallet/cryptools": "1.2.x",
+    "@webwallet/cryptools": "1.3.x",
     "@webwallet/graphstore": "0.3.x",
-    "@webwallet/hashtable": "0.3.x",
+    "@webwallet/hashtable": "^0.3.1",
     "@webwallet/schemas": "1.2.x",
     "bignumber.js": "^4.0.2",
     "bs58check": "2.1.2",
