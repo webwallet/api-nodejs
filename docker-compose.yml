@@ -1,0 +1,32 @@
+version: '3'
+services:
+  datastore:
+    image: singularities/datastore-emulator
+    environment:
+      - DATASTORE_PROJECT_ID=some-project-id
+      - DATASTORE_LISTEN_ADDRESS=0.0.0.0:8081
+    ports:
+      - "8081:8081"
+  neo4j:
+    image: neo4j:latest
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: "none"
+    volumes:
+      - $HOME/neo4j/data:/data
+  web:
+    build: .
+    ports:
+     - "3000:3000"
+    environment:
+     - GRAPHHOST=neo4j:7687
+     - APIENDPOINT=datastore:8081
+    depends_on: 
+     - neo4j
+     - datastore
+    volumes:
+     - .:/starter
+     - /starter/node_modules
+     
