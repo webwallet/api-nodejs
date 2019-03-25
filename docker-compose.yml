@@ -23,6 +23,7 @@ services:
     environment:
      - GRAPHHOST=neo4j:7687
      - APIENDPOINT=datastore:8081
+     - GOOGLE_CLOUD_PROJECT=tin-movii
     depends_on: 
      - neo4j
      - datastore
