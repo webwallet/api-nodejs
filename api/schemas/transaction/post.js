@@ -1,5 +1,5 @@
 
-const schemas = require('@webwallet/schemas').joi
+const schemas = require('@webwallet/schemas')('joi')
 
 const definitions = {
   request: {
