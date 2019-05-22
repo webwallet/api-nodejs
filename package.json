@@ -23,7 +23,7 @@
   "devDependencies": {},
   "scripts": {
     "start": "node index.js",
-    "test": "npm test"
+    "test": "jest"
   },
   "engines": {
     "node": "10.x",
