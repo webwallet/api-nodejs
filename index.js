@@ -15,7 +15,11 @@ let options = {
       auth: {username: process.env.COUCHUSER, password: process.env.COUCHPASS}
     }
   },
-  graphstore: {host: process.env.GRAPHHOST, auth: {password: process.env.GRAPHPASS}}
+  graphstore: {
+    scheme: process.env.GRAPHSCHEME,
+    host: process.env.GRAPHHOST,
+    auth: {password: process.env.GRAPHPASS}
+  }
 }
 
 function databaseMiddleware(databases) {
