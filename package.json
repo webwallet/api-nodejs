@@ -3,9 +3,6 @@
   "version": "1.3.0",
   "description": "WebWallet API reference implementation in Node.js",
   "main": "index.js",
-  "_moduleAliases": {
-    "@lib": "lib"
-  },
   "dependencies": {
     "@webwallet/cryptools": "1.3.x",
     "@webwallet/graphstore": "0.3.1",
