@@ -16,7 +16,8 @@ async function handler({ request, params, database }) {
   let verification = await utils.iou.verifyCryptoSignatures(inputs, wallets)
 
   /* 4. Get previous unspent outputs and initialize new transaction outputs */
-  let previous = await utils.transaction.getUnspentOutputs({wallets, database})
+  // let previous = await utils.transaction.getUnspentOutputs({wallets, database})
+  let previous = await utils.transaction.getUnspentOutputsBatched({countspaces, database})
   let outputs = utils.transaction.buildOutputsMapping(wallets)
   /* 5. Combine inputs and previous outputs to compute new outputs */
   await utils.transaction.feedPreviousToOutputs(previous, outputs)
@@ -29,13 +30,12 @@ async function handler({ request, params, database }) {
   let hashtableResult = await utils.transaction
     .storeTransactionRecord({transaction, database})
   /* 8. Send graphstore clearing query */
-  let queryParams = Object.assign({countspaces},
-    utils.transaction.buildQueryParameters(transaction))
+  let queryParams = utils.transaction.buildQueryParameters(transaction)
   let {transaction: graphTransaction, records} = await database.graphstore
     .query('spendTransactionOutputs', queryParams)
   /* 9. Run post-query validations and commit / rollback */
   let validation = await utils.transaction.preCommitValidation(transaction, records)
-  await utils.transaction.commitORRollback(validation, graphTransaction)
+  // await utils.transaction.commitORRollback(validation, graphTransaction)
 
   return {body: validation.response, status: 200}
 }

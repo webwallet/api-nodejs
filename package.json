@@ -1,12 +1,12 @@
 {
   "name": "@webwallet/api",
-  "version": "1.5.0",
+  "version": "1.5.2",
   "description": "WebWallet API reference implementation in Node.js",
   "main": "index.js",
   "dependencies": {
     "@webwallet/cryptools": "^1.3.1",
-    "@webwallet/graphstore": "^1.0.1",
-    "@webwallet/hashtable": "0.3.3",
+    "@webwallet/graphstore": "^1.0.3",
+    "@webwallet/hashtable": "^1.0.1",
     "@webwallet/schemas": "^1.5.1",
     "bignumber.js": "^4.0.2",
     "bs58check": "2.1.2",
@@ -14,7 +14,7 @@
     "joi": "^10.4.1",
     "json-stable-stringify": "^1.0.1",
     "microapi": "^0.2",
-    "module-alias": "^2.2.1",
+    "module-alias": "^2.2.2",
     "require-directory": "^2.1.1"
   },
   "devDependencies": {},
