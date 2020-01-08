@@ -1,6 +1,10 @@
 'use strict'
 
-let dotenv = require('dotenv').config()
+require('dotenv').config()
+const moduleAlias = require('module-alias') // custom local paths
+moduleAlias.addAlias('@lib', __dirname + '/lib')
+moduleAlias()
+
 
 const Microapi = require('microapi/koa')
 const Hashtable = require('./lib/clients/hashtable')
@@ -8,13 +12,18 @@ const Graphstore = require('./lib/clients/graphstore')
 
 let options = {
   hashtable: {
-    datastore: {projectId: process.env.PROJECTID},
+
+    datastore: {projectId: process.env.PROJECTID, apiEndpoint: process.env.APIENDPOINT},
     couchbase: {
       host: process.env.COUCHHOST, name: process.env.COUCHNAME,
       auth: {username: process.env.COUCHUSER, password: process.env.COUCHPASS}
     }
   },
-  graphstore: {host: process.env.GRAPHHOST, auth: {password: process.env.GRAPHPASS}}
+  graphstore: {
+    scheme: process.env.GRAPHSCHEME,
+    host: process.env.GRAPHHOST,
+    auth: {password: process.env.GRAPHPASS}
+  }
 }
 
 function databaseMiddleware(databases) {
@@ -33,8 +42,10 @@ async function init({port = 3000} = {}) {
   ])
 
   api.use(databaseMiddleware({graphstore, hashtable}))
-  api.define('./api')
-  api.listen(port)
+  api.define(`${__dirname}/api`)
+  api.listen(port, () => {
+    console.log(`Listening on port ${port}`)
+  })
 
   return {api, graphstore, hashtable}
 }

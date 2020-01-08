@@ -11,7 +11,10 @@ const cryptoSignatures = require('./crypto-signatures')
 const items = joi.object().keys({
   hash: cryptoHashObject.meta({className: 'crypto-hash-object'}).required(),
   data: transactionIouData.meta({className: 'transaction-iou-data'}).required(),
-  sigs: cryptoSignatures.meta({className: 'crypto-signatures'}).required()
+  meta: {
+    signatures: cryptoSignatures.meta({className: 'crypto-signatures'}).required(),
+    scripts: joi.array().optional()
+  }
 })
 
 const schema = joi.array().items(items)
