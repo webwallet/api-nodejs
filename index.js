@@ -12,8 +12,11 @@ const Graphstore = require('./lib/clients/graphstore')
 
 let options = {
   hashtable: {
-
-    datastore: {projectId: process.env.PROJECTID, apiEndpoint: process.env.APIENDPOINT},
+    datastore: {
+      projectId: process.env.PROJECTID,
+      apiEndpoint: process.env.APIENDPOINT,
+      namespace: process.env.DATASTORE_NAMESPACE
+    },
     couchbase: {
       host: process.env.COUCHHOST, name: process.env.COUCHNAME,
       auth: {username: process.env.COUCHUSER, password: process.env.COUCHPASS}
