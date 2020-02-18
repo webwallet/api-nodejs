@@ -2,9 +2,9 @@
 
 const utils = require('@lib/utils')
 
-async function handler({ request, params, database }) {
-  let inputs = request.body.data.inputs
-
+async function handler(req,res) {
+  let inputs = req.body.data.inputs
+let database = req.database
   /* 0. Verify transaction integrity */
   await utils.iou.verifyCryptoIntegrity(inputs)
 
@@ -37,7 +37,7 @@ async function handler({ request, params, database }) {
   let validation = await utils.transaction.preCommitValidation(transaction, records)
   await utils.transaction.commitORRollback(validation, graphTransaction)
 
-  return {body: validation.response, status: 200}
+  res.send(validation.response)
 }
 
 handler.exceptions = async function exceptions(context, exception) {

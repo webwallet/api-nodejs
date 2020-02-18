@@ -4,11 +4,15 @@ require('dotenv').config()
 const moduleAlias = require('module-alias') // custom local paths
 moduleAlias.addAlias('@lib', __dirname + '/lib')
 moduleAlias()
-
-
-const Microapi = require('microapi/koa')
+const express = require('express')
 const Hashtable = require('./lib/clients/hashtable')
 const Graphstore = require('./lib/clients/graphstore')
+var bodyParser = require('body-parser')
+
+const  postTransaction= require('./api/routes/transaction/post')
+
+const {getUnspentPointers, getOutputContents} = require('@lib/utils/transaction/getUnspentOutputs.js')
+
 
 let options = {
   hashtable: {
@@ -28,24 +32,46 @@ let options = {
     auth: {password: process.env.GRAPHPASS}
   }
 }
+const delimiter = '::'
 
-function databaseMiddleware(databases) {
-  return async (context, next) => {
-    context.database = databases
-    await next()
-  }
-}
+const stringify = require('json-stable-stringify')
+
+
+
+
 
 async function init({port = 3000} = {}) {
   const [api, hashtable, graphstore] = await Promise.all([
-    new Microapi(),
+    
+    express(),
     // Hashtable.database.couchbase.connect(options.hashtable.couchbase),
     Hashtable.database.datastore.connect(options.hashtable.datastore),
     Graphstore.database.connect(options.graphstore)
   ])
 
-  api.use(databaseMiddleware({graphstore, hashtable}))
-  api.define(`${__dirname}/api`)
+  api.use(function (req, res, next) {
+    req.database = {hashtable, graphstore}
+    next()
+  })
+  
+
+  api.use(bodyParser.urlencoded({ extended: false }))
+    .use(bodyParser.json())
+    
+  api.get('/address/:address/outputs/history',(req, res) => require('./api/routes/address/_address/outputs/history/get')(req, res))
+    
+  api
+    .use('/address/:address/outputs/unspent',require('./api/routes/address/_address/outputs/unspent/get').setup)
+    .use('/address/:address/outputs/unspent', getUnspentPointers)
+    .use('/address/:address/outputs/unspent', getOutputContents)
+    .get('/address/:address/outputs/unspent',require('./api/routes/address/_address/outputs/unspent/get').handler)
+    
+  api
+    .get('/iou/:iou', require('./api/routes/iou/_iou/get'))
+    .get('/transaction/:transaction',(req, res) => require('./api/routes/transaction/_transaction/get')(req, res))
+    .post('/transaction',(req, res) => postTransaction(req, res))
+
+
   api.listen(port, () => {
     console.log(`Listening on port ${port}`)
   })
