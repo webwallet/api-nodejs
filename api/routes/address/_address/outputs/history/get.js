@@ -2,18 +2,19 @@
 
 const utils = require('@lib/utils')
 
-async function handler({ request, params, database }) {
+function setup({params, query}, res, next) {
   let wallets = new Map()
-  wallets.set(params.address, {countspaces: [request.query.counter]})
-
-  let {skip, limit} = request.query
+  wallets.set(params.address, {countspaces: [query.counter]})
+  let {skip, limit} = query
   let queryParams = {skip, limit}
-
-  /* Get unspent transaction outputs in the given counstpaces */
-  let outputs = await utils.transaction
-    .getPreviousOutputs({wallets, database, queryParams})
-
-  return {body: {data: {outputs}}, status: 200}
+  res.locals.wallets = wallets
+  res.locals.queryParams =  queryParams
+  next()
 }
 
-module.exports = handler
+async function handler(req, res) {
+  let outputs = await res.locals.outputs
+  res.send({data: {outputs}})
+}
+
+module.exports = {handler, setup}

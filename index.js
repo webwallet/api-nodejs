@@ -9,10 +9,11 @@ const Hashtable = require('./lib/clients/hashtable')
 const Graphstore = require('./lib/clients/graphstore')
 var bodyParser = require('body-parser')
 
-const  postTransaction= require('./api/routes/transaction/post')
+const utils = require('@lib/utils')
 
 const {getUnspentPointers, getOutputContents} = require('@lib/utils/transaction/getUnspentOutputs.js')
-
+const getPreviousOutputs = require('./lib/utils/transaction/getPreviousOutputs')
+const storeTransactionRecord = require('./lib/utils/transaction/storeTransactionRecord')
 
 let options = {
   hashtable: {
@@ -58,7 +59,11 @@ async function init({port = 3000} = {}) {
   api.use(bodyParser.urlencoded({ extended: false }))
     .use(bodyParser.json())
     
-  api.get('/address/:address/outputs/history',(req, res) => require('./api/routes/address/_address/outputs/history/get')(req, res))
+  api
+    .use('/address/:address/outputs/history', require('./api/routes/address/_address/outputs/history/get').setup)
+    .use('/address/:address/outputs/history', getPreviousOutputs)
+    .use('/address/:address/outputs/unspent', getOutputContents)
+    .get('/address/:address/outputs/history', require('./api/routes/address/_address/outputs/history/get').handler)
     
   api
     .use('/address/:address/outputs/unspent',require('./api/routes/address/_address/outputs/unspent/get').setup)
@@ -66,10 +71,40 @@ async function init({port = 3000} = {}) {
     .use('/address/:address/outputs/unspent', getOutputContents)
     .get('/address/:address/outputs/unspent',require('./api/routes/address/_address/outputs/unspent/get').handler)
     
+  api.get('/iou/:iou', require('./api/routes/iou/_iou/get'))
+    
   api
-    .get('/iou/:iou', require('./api/routes/iou/_iou/get'))
-    .get('/transaction/:transaction',(req, res) => require('./api/routes/transaction/_transaction/get')(req, res))
-    .post('/transaction',(req, res) => postTransaction(req, res))
+    .get('/transaction/:transaction', require('./api/routes/transaction/_transaction/get'))
+    
+  api
+    .use('/transaction', require('./api/routes/transaction/post').setup)
+    .use('/transaction', getUnspentPointers)
+    .use('/transaction', getOutputContents)
+    .use('/transaction', utils.transaction.feedPreviousToOutputs)
+    .use('/transaction', utils.transaction.feedInputsToOutputs)
+    .use('/transaction', function buildDocument(req, res, next) {
+
+      let inputs = req.body.data.inputs
+      let outputs = res.locals.newoutputs
+      let transaction = utils.transaction.buildDocument({inputs, outputs})
+      transaction.validate().hash().sign([])
+      res.locals.transaction = transaction
+      next()
+    })
+    .use('/transaction', storeTransactionRecord)
+    .use('/transaction', async function querySpendTransactionOutputs(req, res, next) {
+      let countspaces  = res.locals.countspaces
+      let transaction = res.locals.transaction
+      let queryParams = Object.assign({countspaces},
+        utils.transaction.buildQueryParameters(transaction))
+      let {transaction: graphTransaction, records} = await database.graphstore
+        .query('spendTransactionOutputs', queryParams)
+      
+      res.locals.graphTransaction = graphTransaction
+      res.locals.records = records
+      next()
+    })
+    .post('/transaction',require('./api/routes/transaction/post').handler)
 
 
   api.listen(port, () => {

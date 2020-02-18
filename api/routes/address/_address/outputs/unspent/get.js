@@ -1,6 +1,6 @@
 'use strict'
 
-function setup(req, res, next) {
+function setup({params, query}, res, next) {
   let wallets = new Map()
   wallets.set(params.address, {countspaces: [query.counter]})
   let {skip, limit} = query
