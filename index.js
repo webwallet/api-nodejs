@@ -58,50 +58,27 @@ async function init({port = 3000} = {}) {
 
   api.use(bodyParser.urlencoded({ extended: false }))
     .use(bodyParser.json())
-    .use((req,res, next) => {
-      console.log(req.url)
-      next()
-    })
+   
     
   api
-    .use('/address/:address/outputs/history', function log(req, res, next) {
-      console.log('OUTPUTSHISTORY')
-      next()
-    })
     .use('/address/:address/outputs/history', require('./api/routes/address/_address/outputs/history/get').setup)
     .use('/address/:address/outputs/history', getPreviousOutputs)
-    .use('/address/:address/outputs/unspent', getOutputContents)
+    .use('/address/:address/outputs/history', getOutputContents)
     .get('/address/:address/outputs/history', require('./api/routes/address/_address/outputs/history/get').handler)
     
   api
-    .get('/address/:address/outputs/unspent', function log(req, res, next) {
-      console.log('OUTPUTSUNSPENT  ROUTE CALL')
-      next()
-    })
     .get('/address/:address/outputs/unspent',require('./api/routes/address/_address/outputs/unspent/get').setup)
     .get('/address/:address/outputs/unspent', getUnspentPointers)
     .get('/address/:address/outputs/unspent', getOutputContents)
     .get('/address/:address/outputs/unspent',require('./api/routes/address/_address/outputs/unspent/get').handler)
     
   api
-  .use('/iou/:iou', function log(req, res, next) {
-    console.log('IOUUUUUU')
-    next()
-  })
   .get('/iou/:iou', require('./api/routes/iou/_iou/get'))
     
   api
-  .use('/transaction/:transaction', function log(req, res, next) {
-    console.log('GETTTTTRANSACTION')
-    next()
-  })
     .get('/transaction/:transaction', require('./api/routes/transaction/_transaction/get'))
     
   api
-  .post('/transaction', function log(req, res, next) {
-    console.log('POSTTRANSACTION')
-    next()
-  })
     .post('/transaction', require('./api/routes/transaction/post').setup)
     .post('/transaction', getUnspentPointers)
     .post('/transaction', getOutputContents)
@@ -118,6 +95,7 @@ async function init({port = 3000} = {}) {
     })
     .post('/transaction', storeTransactionRecord)
     .post('/transaction', async function querySpendTransactionOutputs(req, res, next) {
+      let database = req.database
       let countspaces  = res.locals.countspaces
       let transaction = res.locals.transaction
       let queryParams = Object.assign({countspaces},
