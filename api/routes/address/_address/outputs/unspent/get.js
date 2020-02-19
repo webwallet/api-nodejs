@@ -1,6 +1,7 @@
 'use strict'
 
-function setup({params, query}, res, next) {
+async function setup({params, query}, res, next) {
+  console.log('SETUPPPP')
   let wallets = new Map()
   wallets.set(params.address, {countspaces: [query.counter]})
   let {skip, limit} = query
