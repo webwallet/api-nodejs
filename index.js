@@ -17,6 +17,10 @@ const storeTransactionRecord = require('./lib/utils/transaction/storeTransaction
 
 const getTransactionByHash = require('./api/routes/transaction/_transaction/get')
 const getIouByHash = require('./api/routes/iou/_iou/get')
+
+const schemas = require('@webwallet/schemas')('joi')
+const Joi = require('joi')
+
 let options = {
   hashtable: {
     datastore: {
@@ -79,6 +83,20 @@ async function init({port = 3000} = {}) {
     .get('/transaction/:transaction', getTransactionByHash)
     
   api
+    .post('/transaction', function validate(req, res, next) {
+      const { body } = req
+      const result = Joi.validate(body, schemas.transaction.request.object); 
+      const { value, error } = result; 
+      const valid = error == null; 
+      if (!valid) { 
+        res.status(422).json({ 
+          message: 'Invalid request', 
+          data: body 
+        }) 
+      } else { 
+      next()
+      } 
+    })
     .post('/transaction', require('./api/routes/transaction/post').setup)
     .post('/transaction', getUnspentPointers)
     .post('/transaction', getOutputContents)
