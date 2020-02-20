@@ -2,27 +2,30 @@
 
 const utils = require('@lib/utils')
 
-async function handler({ params, database }) {
-  let { id, body: transaction } = await utils.transaction
-    .getTransactionByHash({hash: params.transaction, database})
+async function handler({ params, database }, res) {
+  try {
 
-  let status = !!id ? 200 : 404 /* IOU not found */
+    let { id, body: transaction } = await utils.transaction
+      .getTransactionByHash({hash: params.transaction, database})
 
-  return {body: transaction, status}
-}
+    let status = !!id ? 200 : 404 /* IOU not found */
 
-handler.exceptions = async function exceptions(context, exception) {
-  let { message, details } = exception
-  let body = {error: {message, details}}
-  let status
+    res.status(status).send(transaction)
 
-  switch (exception.message) {
-  default:
-    status = 404
-    break
+  } catch(exeption) {
+    let { message, details } = exception
+    let body = {error: {message, details}}
+    let status
+
+    switch (exception.message) {
+    default:
+      status = 404
+      break
+    }
+
+    res.status(status).send(body)
   }
-
-  return {body, status}
 }
+
 
 module.exports = handler

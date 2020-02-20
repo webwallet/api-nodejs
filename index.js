@@ -15,6 +15,8 @@ const {getUnspentPointers, getOutputContents} = require('./lib/utils/transaction
 const getPreviousOutputs = require('./lib/utils/transaction/getPreviousOutputs')
 const storeTransactionRecord = require('./lib/utils/transaction/storeTransactionRecord')
 
+const getTransactionByHash = require('./api/routes/transaction/_transaction/get')
+const getIouByHash = require('./api/routes/iou/_iou/get')
 let options = {
   hashtable: {
     datastore: {
@@ -33,9 +35,7 @@ let options = {
     auth: {password: process.env.GRAPHPASS}
   }
 }
-const delimiter = '::'
 
-const stringify = require('json-stable-stringify')
 
 
 
@@ -73,10 +73,10 @@ async function init({port = 3000} = {}) {
     .get('/address/:address/outputs/unspent',require('./api/routes/address/_address/outputs/unspent/get').handler)
     
   api
-  .get('/iou/:iou', require('./api/routes/iou/_iou/get'))
+  .get('/iou/:iou', getIouByHash)
     
   api
-    .get('/transaction/:transaction', require('./api/routes/transaction/_transaction/get'))
+    .get('/transaction/:transaction', getTransactionByHash)
     
   api
     .post('/transaction', require('./api/routes/transaction/post').setup)

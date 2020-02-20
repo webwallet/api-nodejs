@@ -34,7 +34,7 @@ async function setup(req, res, next) {
       break
     }
   
-    res.send(body).sendStatus(status)
+    res.status(status).send(body)
   }
 
 }
