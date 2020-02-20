@@ -41,7 +41,19 @@ let options = {
 }
 
 
-
+function validation(schema, property) {
+  return (req, res, next) => {
+    const { error } =  Joi.validate(req[property], Joi.object(schema))
+    const valid = error == null; 
+        if (!valid) { 
+          res.status(422).json({ 
+            message: 'Invalid request'
+          }) 
+        } else { 
+        next()
+        }
+  }
+}
 
 
 
@@ -65,18 +77,21 @@ async function init({port = 3000} = {}) {
    
     
   api
+    .use('/address/:address/outputs/history', validation(require('./api/schemas/address/_address/outputs/history/get').definitions.request.query, 'query'))
     .use('/address/:address/outputs/history', require('./api/routes/address/_address/outputs/history/get').setup)
     .use('/address/:address/outputs/history', getPreviousOutputs)
     .use('/address/:address/outputs/history', getOutputContents)
     .get('/address/:address/outputs/history', require('./api/routes/address/_address/outputs/history/get').handler)
     
   api
+    .use('/address/:address/outputs/unspent', validation(require('./api/schemas/address/_address/outputs/unspent/get').definitions.request.query, 'query'))
     .get('/address/:address/outputs/unspent',require('./api/routes/address/_address/outputs/unspent/get').setup)
     .get('/address/:address/outputs/unspent', getUnspentPointers)
     .get('/address/:address/outputs/unspent', getOutputContents)
     .get('/address/:address/outputs/unspent',require('./api/routes/address/_address/outputs/unspent/get').handler)
     
   api
+  .use('/iou/:iou', validation(require('./api/schemas/iou/_iou/get').definitions.request.path, 'params'))
   .get('/iou/:iou', getIouByHash)
     
   api
@@ -86,7 +101,7 @@ async function init({port = 3000} = {}) {
     .post('/transaction', function validate(req, res, next) {
       const { body } = req
       const result = Joi.validate(body, schemas.transaction.request.object); 
-      const { value, error } = result; 
+      const { error } = result; 
       const valid = error == null; 
       if (!valid) { 
         res.status(422).json({ 
