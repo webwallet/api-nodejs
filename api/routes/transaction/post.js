@@ -22,6 +22,7 @@ async function setup(req, res, next) {
     
     next()
   } catch(exception) {
+    console.log('=====> ERROR SETUP', JSON.stringify(exception, null, 1))
     let {message, details, stack} = exception
     let body = {error: {message, details}}
     let status = 400
@@ -43,12 +44,17 @@ async function handler(req,res) {
   let transaction = res.locals.transaction
   let graphTransaction = res.locals.graphTransaction
   let records = res.locals.records
+  
+  try {
+    let validation = await utils.transaction.preCommitValidation(transaction, records)
+    await utils.transaction.commitORRollback(validation, graphTransaction)
 
-
-  let validation = await utils.transaction.preCommitValidation(transaction, records)
-  await utils.transaction.commitORRollback(validation, graphTransaction)
-
-  res.send(validation.response)
+    res.send(validation.response)
+  } catch(exception) {
+    const { message, details, stack } = exception
+    const body = { error: { message } }
+    res.status(400).send(body)
+  }
 }
 
 
