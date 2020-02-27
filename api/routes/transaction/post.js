@@ -22,7 +22,6 @@ async function setup(req, res, next) {
     
     next()
   } catch(exception) {
-    console.log('=====> ERROR SETUP', JSON.stringify(exception, null, 1))
     let {message, details, stack} = exception
     let body = {error: {message, details}}
     let status = 400
