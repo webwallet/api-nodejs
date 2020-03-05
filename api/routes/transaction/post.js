@@ -50,7 +50,7 @@ async function handler(req,res) {
 
     res.send(validation.response)
   } catch(exception) {
-    const { message, details, stack } = exception
+    const { message } = exception
     const body = { error: { message } }
     res.status(400).send(body)
   }

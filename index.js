@@ -128,17 +128,23 @@ async function init({port = 3000} = {}) {
     })
     .post('/transaction', storeTransactionRecord)
     .post('/transaction', async function querySpendTransactionOutputs(req, res, next) {
-      let database = req.database
-      let countspaces  = res.locals.countspaces
-      let transaction = res.locals.transaction
-      let queryParams = Object.assign({countspaces},
-        utils.transaction.buildQueryParameters(transaction))
-      let {transaction: graphTransaction, records} = await database.graphstore
-        .query('spendTransactionOutputs', queryParams)
-      
-      res.locals.graphTransaction = graphTransaction
-      res.locals.records = records
-      next()
+      try {
+        let database = req.database
+        let countspaces  = res.locals.countspaces
+        let transaction = res.locals.transaction
+        let queryParams = Object.assign({countspaces},
+          utils.transaction.buildQueryParameters(transaction))
+        let {transaction: graphTransaction, records} = await database.graphstore
+          .query('spendTransactionOutputs', queryParams)
+        
+        res.locals.graphTransaction = graphTransaction
+        res.locals.records = records
+        next()
+      } catch(exception) {
+        const { message } = exception
+        const body = { error: { message } }
+        res.status(404).send(body)
+      }
     })
     .post('/transaction',require('./api/routes/transaction/post').handler)
 

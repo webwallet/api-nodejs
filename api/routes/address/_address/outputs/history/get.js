@@ -13,8 +13,14 @@ function setup({params, query}, res, next) {
 }
 
 async function handler(req, res) {
-  let outputs = await res.locals.outputs
-  res.send({data: {outputs}})
+  try {
+    let outputs = await res.locals.outputs
+    res.send({data: {outputs}})
+  } catch(exception) {
+    const { message } = exception
+    const body = { error: { message } }
+    res.status(400).send(body)
+  }
 }
 
 module.exports = {handler, setup}
