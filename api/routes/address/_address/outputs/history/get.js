@@ -16,7 +16,7 @@ function setup({params, query}, res, next) {
   }
 }
 
-async function handler(req, res) {
+async function handler(req, res, next) {
   try {
     let outputs = await res.locals.outputs
     res.send({data: {outputs}})

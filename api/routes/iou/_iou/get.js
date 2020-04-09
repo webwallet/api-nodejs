@@ -2,7 +2,7 @@
 
 const utils = require('@lib/utils')
 
-async function handler({ params, database }, res) {
+async function handler({ params, database }, res, next) {
   try {
     let { iou, transaction } = await utils.iou
       .getIouByHash({hash: params.iou, database})
