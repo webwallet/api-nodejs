@@ -118,31 +118,43 @@ async function init({port = 3000} = {}) {
     .post('/transaction', utils.transaction.feedPreviousToOutputs)
     .post('/transaction', utils.transaction.feedInputsToOutputs)
     .post('/transaction', function buildDocument(req, res, next) {
-
-      let inputs = req.body.data.inputs
-      let outputs = res.locals.newoutputs
-      let transaction = utils.transaction.buildDocument({inputs, outputs})
-      transaction.validate().hash().sign([])
-      res.locals.transaction = transaction
-      next()
+      try {
+        let inputs = req.body.data.inputs
+        let outputs = res.locals.newoutputs
+        let transaction = utils.transaction.buildDocument({inputs, outputs})
+        transaction.validate().hash().sign([])
+        res.locals.transaction = transaction
+        next()
+      } catch (error) {
+        next(error)
+      }
     })
     .post('/transaction', storeTransactionRecord)
     .post('/transaction', async function querySpendTransactionOutputs(req, res, next) {
-      let database = req.database
-      let countspaces  = res.locals.countspaces
-      let transaction = res.locals.transaction
-      let queryParams = Object.assign({countspaces},
-        utils.transaction.buildQueryParameters(transaction))
-      let {transaction: graphTransaction, records} = await database.graphstore
-        .query('spendTransactionOutputs', queryParams)
-      
-      res.locals.graphTransaction = graphTransaction
-      res.locals.records = records
-      next()
+      try {
+        let database = req.database
+        let countspaces  = res.locals.countspaces
+        let transaction = res.locals.transaction
+        let queryParams = Object.assign({countspaces},
+          utils.transaction.buildQueryParameters(transaction))
+        let {transaction: graphTransaction, records} = await database.graphstore
+          .query('spendTransactionOutputs', queryParams)
+        
+        res.locals.graphTransaction = graphTransaction
+        res.locals.records = records
+        next()
+      } catch (error) {
+        next(error)
+      }
     })
     .post('/transaction',require('./api/routes/transaction/post').handler)
 
+  api.use((error, req, res, next) => {
+    let {message, details, stack} = error
+    let body = {error: {message, details}}
 
+    res.status(400).send(body)
+  })
   api.listen(port, () => {
     console.log(`Listening on port ${port}`)
   })
