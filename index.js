@@ -43,15 +43,19 @@ let options = {
 
 function validation(schema, property) {
   return (req, res, next) => {
-    const { error } =  Joi.validate(req[property], Joi.object(schema))
-    const valid = error == null; 
-        if (!valid) { 
-          res.status(422).json({ 
-            message: 'Invalid request'
-          }) 
-        } else { 
-        next()
-        }
+    try {
+      const { error } =  Joi.validate(req[property], Joi.object(schema))
+      const valid = error == null; 
+      if (!valid) {
+        error.status = 422
+        error.message = 'Invalid request'
+        throw error
+      } else { 
+      next()
+      }
+    } catch (error) {
+      next(error)
+    }
   }
 }
 
@@ -99,18 +103,22 @@ async function init({port = 3000} = {}) {
     
   api
     .post('/transaction', function validate(req, res, next) {
-      const { body } = req
-      const result = Joi.validate(body, schemas.transaction.request.object); 
-      const { error } = result; 
-      const valid = error == null; 
-      if (!valid) { 
-        res.status(422).json({ 
-          message: 'Invalid request', 
-          data: body 
-        }) 
-      } else { 
-      next()
-      } 
+      try {
+        const { body } = req
+        const result = Joi.validate(body, schemas.transaction.request.object); 
+        const { error } = result; 
+        const valid = error == null; 
+        if (!valid) {
+          error.status = 422
+          error.message = 'Invalid request'
+          error.validationBody = body
+          throw error
+        } else { 
+        next()
+        }
+      } catch (error) {
+        next(error)
+      }
     })
     .post('/transaction', require('./api/routes/transaction/post').setup)
     .post('/transaction', getUnspentPointers)
@@ -150,10 +158,10 @@ async function init({port = 3000} = {}) {
     .post('/transaction',require('./api/routes/transaction/post').handler)
 
   api.use((error, req, res, next) => {
-    let {message, details, stack} = error
-    let body = {error: {message, details}}
+    let {message, details, status, validationBody} = error
+    let body = {error: {message, details, data: validationBody}}
 
-    res.status(400).send(body)
+    res.status(status || 400).send(body)
   })
   api.listen(port, () => {
     console.log(`Listening on port ${port}`)

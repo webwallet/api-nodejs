@@ -10,6 +10,7 @@ async function setup({params, query}, res, next) {
     res.locals.queryParams =  queryParams
     next()
   } catch (error) {
+    error.status = 500
     next(error)
   }
 }
@@ -20,6 +21,7 @@ async function handler(req, res, next) {
     let outputs = await res.locals.outputs
     res.send({data: {outputs}})
   } catch (error) {
+    error.status = 500
     next(error)
   }
 }

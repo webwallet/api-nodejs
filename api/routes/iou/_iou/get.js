@@ -11,6 +11,7 @@ async function handler({ params, database }, res, next) {
 
     res.status(status).send({data: {iou, transaction}})
   } catch (error) {
+    error.status = 500
     next(error)
   }
 }
