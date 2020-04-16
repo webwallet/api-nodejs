@@ -158,6 +158,7 @@ async function init({port = 3000} = {}) {
     .post('/transaction',require('./api/routes/transaction/post').handler)
 
   api.use((error, req, res, next) => {
+    console.log('===> ERROR WEBWALLET: ', error)
     let {message, details, status, validationBody} = error
     let body = {error: {message, details, data: validationBody}}
 

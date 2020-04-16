@@ -41,7 +41,6 @@ async function handler(req,res) {
   let transaction = res.locals.transaction
   let graphTransaction = res.locals.graphTransaction
   let records = res.locals.records
-  
   try {
     let validation = await utils.transaction.preCommitValidation(transaction, records)
     await utils.transaction.commitORRollback(validation, graphTransaction)
