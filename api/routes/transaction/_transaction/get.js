@@ -12,18 +12,9 @@ async function handler({ params, database }, res) {
 
     res.status(status).send(transaction)
 
-  } catch(exeption) {
-    let { message, details } = exception
-    let body = {error: {message, details}}
-    let status
-
-    switch (exception.message) {
-    default:
-      status = 404
-      break
-    }
-
-    res.status(status).send(body)
+  } catch(error) {
+    error.status = 404
+    next(error)
   }
 }
 
