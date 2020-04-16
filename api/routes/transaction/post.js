@@ -21,20 +21,18 @@ async function setup(req, res, next) {
     res.locals.newoutputs = outputs
     
     next()
-  } catch(exception) {
-    let {message, details, stack} = exception
-    let body = {error: {message, details}}
+  } catch(error) {
     let status = 400
   
-    switch (exception.message) {
+    switch (error.message) {
     case 'signature-verification-failed':
       break
     default:
       status = 500
       break
     }
-  
-    res.status(status).send(body)
+    error.status = status
+    next(error)
   }
 
 }
@@ -49,10 +47,8 @@ async function handler(req,res) {
     await utils.transaction.commitORRollback(validation, graphTransaction)
 
     res.send(validation.response)
-  } catch(exception) {
-    const { message } = exception
-    const body = { error: { message } }
-    res.status(400).send(body)
+  } catch(error) {
+    next(error)
   }
 }
 
